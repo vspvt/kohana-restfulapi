@@ -49,7 +49,9 @@ class Kohana_RestfulAPI
 			$defaults,
 			[
 				'version' => (int) self::config('version', 1),
-				'directory' => Kohana_Arr::get($defaults, 'directory', 'Api_V{version}'),
+				'directory' =>
+					self::config('directory_prefix')
+					. Kohana_Arr::get($defaults, 'directory', 'V{version}'),
 				'controller' => Kohana_Arr::get($defaults, 'controller'),
 				'action' => 'index',
 			]
@@ -86,7 +88,6 @@ class Kohana_RestfulAPI
 	static function route(Route $route, $params, Request $request)
 	{
 		$params['directory'] = strtr($params['directory'], [
-			'{directory_prefix}' => self::config('directory_prefix'),
 			'{version}' => $params['version'],
 		]);
 

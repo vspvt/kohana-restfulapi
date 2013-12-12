@@ -5,7 +5,7 @@
 
 return [
 	'version'=> 1,
-	'directory_prefix' => 'Api',
+	'directory_prefix' => 'Api' . DIRECTORY_SEPARATOR,
 	'route' => [
 		'name' => 'api',
 		'url_prefix' => 'api(/v<version>)',
@@ -15,7 +15,7 @@ return [
 			'custom_id' => '(\d+|[a-zA-Z][a-zA-Z0-9_]*)',
 		],
 		'defaults' => [
-			'directory' => '{directory_prefix}' . DIRECTORY_SEPARATOR . 'V{version}',
+			'directory' => 'V{version}',
 		],
 	],
 	'onerror' => [
