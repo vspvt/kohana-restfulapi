@@ -5,9 +5,6 @@
 
 abstract class Kohana_Controller_RestfulAPI extends Controller
 {
-	private static $_apiInitialized = FALSE;
-	private static $_apiConfig;
-
 	/** @var bool Change to FALSE for testing purpose ONLY */
 	protected $responseAsJSON = TRUE;
 
@@ -53,79 +50,6 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 
 	/** @var null|string */
 	private $responseLocation;
-
-	// CONFIG
-	/**
-	 * @param null $path
-	 * @param null $default
-	 *
-	 * @return array|mixed
-	 */
-	static final function apiConfig($path = NULL, $default = NULL)
-	{
-		if (NULL === self::$_apiConfig)
-			self::$_apiConfig = Kohana::$config->load('restfulapi')->as_array();
-
-		return NULL !== $path ? Kohana_Arr::path(self::$_apiConfig, $path, $default) : self::$_apiConfig;
-	}
-
-	/**
-	 * @return int
-	 */
-	static final function apiVersion()
-	{
-		return (int) self::apiConfig('version', 1);
-	}
-
-	private static function apiRouteDefaults()
-	{
-		$defaults = self::apiConfig('route.defaults', []);
-
-		return Helpers_Arr::merge(
-			$defaults,
-			[
-				'version' => self::apiVersion(),
-				'directory' => Kohana_Arr::get($defaults, 'directory', 'Api_V{version}'),
-				'controller' => Kohana_Arr::get($defaults, 'controller'),
-				'action' => 'index',
-			]
-		);
-	}
-
-	// INITIALIZING
-
-	static function initialize()
-	{
-		if (!self::$_apiInitialized) {
-			self::$_apiInitialized = TRUE;
-
-			Response::$messages[102] = 'Processing';
-			Response::$messages[207] = 'Multi-Status';
-			Response::$messages[422] = 'Unprocessable Entity';
-			Response::$messages[423] = 'Locked';
-			Response::$messages[424] = 'Failed Dependency';
-			Response::$messages[507] = 'Insufficient Storage';
-
-			$defaults = self::apiRouteDefaults();
-
-			$params = (array) self::apiConfig('route.params', []);
-			$uri = self::apiConfig('route.url_prefix', 'api') . '(/<controller>';
-			foreach (array_keys($params) as $_paramKey) $uri .= sprintf('(/<%s>', $_paramKey);
-			$uri .= str_repeat(')', count($params) + 1);
-			$params['version'] = '\d+';
-
-			Route::set(self::apiConfig('route.name', 'api'), $uri, $params)
-				->defaults($defaults)
-				->filter([get_class(), 'route']);
-		}
-	}
-
-	static function route(Route $route, $params, Request $request)
-	{
-		$params['directory'] = strtr($params['directory'], ['{version}' => $params['version']]);
-
-		return $params;
-	}
 
 	// REQUEST
 	protected function _parse_request()
@@ -566,7 +490,7 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 			}
 
 			if (isset($exception)) {
-				$_traceType = $this->apiConfig('onerror.debug.exception', 'string');
+				$_traceType = RestfulAPI::config('onerror.debug.exception', 'string');
 				if ($_traceType) $this->setDebugData([
 					'exception' => [
 						'source' => self::exceptionString($exception),
@@ -591,7 +515,7 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 
 			// LOGGING EXCEPTION
 			if (isset($exception)) {
-				$_logCodes = $this->apiConfig('onerror.log.http_codes', []);
+				$_logCodes = RestfulAPI::config('onerror.log.http_codes', []);
 				if (TRUE === $_logCodes || Helpers_Arr::inArray($this->response->status(), $_logCodes)) {
 					Kohana::$log->add(
 						($this->response->status() == 500 ? Log::ERROR : Log::INFO),

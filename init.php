@@ -3,4 +3,4 @@
  * @author: Vad Skakov <vad.skakov@gmail.com>
  */
 
-Controller_RestfulAPI::initialize();
+RestfulAPI::initialize();

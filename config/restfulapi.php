@@ -26,4 +26,14 @@ return [
 			'exception' => Helpers_Core::isProduction() ? FALSE : 'string', // FALSE|NULL - disable, 'array' - Exception->getTrace(), other values Exception->getTraceAsString()
 		],
 	],
+	'response' => [
+		'messages' => [
+			102 => 'Processing',
+			207 => 'Multi-Status',
+			422 => 'Unprocessable Entity',
+			423 => 'Locked',
+			424 => 'Failed Dependency',
+			507 => 'Insufficient Storage',
+		],
+	],
 ];
