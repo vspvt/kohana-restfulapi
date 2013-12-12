@@ -5,6 +5,7 @@
 
 return [
 	'version'=> 1,
+	'directory_prefix' => 'Api',
 	'route' => [
 		'name' => 'api',
 		'url_prefix' => 'api(/v<version>)',
@@ -14,13 +15,8 @@ return [
 			'custom_id' => '(\d+|[a-zA-Z][a-zA-Z0-9_]*)',
 		],
 		'defaults' => [
-			'directory' => 'Api_V{version}',
+			'directory' => '{directory_prefix}' . DIRECTORY_SEPARATOR . 'V{version}',
 		],
-	],
-	'timestamp' => [
-		'input' => 'Y-m-d H:i:s O',
-		//'input' => DateTime::RFC3339,
-		'output' => DateTime::RFC3339,
 	],
 	'onerror' => [
 		'log' => [
