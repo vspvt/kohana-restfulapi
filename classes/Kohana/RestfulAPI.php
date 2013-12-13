@@ -40,9 +40,10 @@ class Kohana_RestfulAPI
 	}
 
 	/**
+	 * @param bool $parseActions
 	 * @param bool $forced
 	 */
-	static function routes($forced = FALSE)
+	static function routes($parseActions = TRUE, $forced = FALSE)
 	{
 		if ($forced || !static::$_routes) {
 			$pathPrefix = 'classes' . DIRECTORY_SEPARATOR;
@@ -54,13 +55,13 @@ class Kohana_RestfulAPI
 
 			foreach ($controllers as $controller) {
 				$className = str_replace([$pathPrefix, DIRECTORY_SEPARATOR, EXT], ['', '_', ''], $controller);
-				self::getClassRoutes($className, $directoryPrefix, $urlPrefix);
+				self::getClassRoutes($className, $directoryPrefix, $urlPrefix, $parseActions);
 			}
 			static::$_routes = TRUE;
 		}
 	}
 
-	protected static function getClassRoutes($className, $directoryPrefix, $urlPrefix, $parseActions = FALSE)
+	protected static function getClassRoutes($className, $directoryPrefix, $urlPrefix, $parseActions = TRUE)
 	{
 		if (preg_match('@_V(\d+)_([^_]+)$@', $className, $matches)) {
 			$version = $matches[1];
