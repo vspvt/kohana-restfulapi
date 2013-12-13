@@ -123,6 +123,7 @@ class Kohana_RestfulAPI
 	{
 		foreach (Arr::get($params, 'models', []) as $key=>$modelName) {
 			if (isset($params[$key])) {
+				$modelName = "Model_{$modelName}";
 				$params[$key] = new $modelName($params[$key]);
 			}
 		}
