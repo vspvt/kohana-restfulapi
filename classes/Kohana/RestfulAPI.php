@@ -134,8 +134,20 @@ class Kohana_RestfulAPI
 	{
 		foreach (Arr::get($params, 'models', []) as $key=>$modelName) {
 			if (isset($params[$key])) {
+				$id = $params[$key];
 				$modelName = "Model_{$modelName}";
-				$params[$key] = new $modelName($params[$key]);
+				$params[$key] = new $modelName($id);
+				if (!$params[$key]->loaded()) {
+					Helpers_Response::json(
+						new HTTP_Exception_404(
+							':model [ :id ] - not loaded',
+							[
+								':model' => $modelName,
+								':id' => $id,
+							]
+						)
+					);
+				}
 			}
 		}
 
