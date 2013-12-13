@@ -101,7 +101,7 @@ class Kohana_RestfulAPI
 						if (NULL !== $actionRoute) {
 							$actionRoute->name = $className . '::' . Arr::get($actionMatches, 1, $method->name);
 							$actionRoute->value = $urlPrefix . $actionRoute->value;
-							$actionRoute->defaults['action'] = Arr::get($actionMatches, 3, $method->name);
+							$actionRoute->defaults['action'] = Arr::get($actionMatches, 3);
 
 							self::makeRoute($actionRoute, $routeDefaults);
 						}
