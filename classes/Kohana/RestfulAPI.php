@@ -51,14 +51,24 @@ class Kohana_RestfulAPI
 			$path = rtrim($pathPrefix . 'Controller' . DIRECTORY_SEPARATOR . $directoryPrefix, '/');
 			$controllers = array_keys(Arr::flatten(Kohana::list_files($path)));
 
-			$urlPrefix = $uri = self::config('route.url_prefix', 'api');
+			$urlBase = self::config('route.url.base', 'api');
+			$urlPrefix = $urlBase	. self::config('route.url.version', '/v{version}');
 
 			foreach ($controllers as $controller) {
 				$className = str_replace([$pathPrefix, DIRECTORY_SEPARATOR, EXT], ['', '_', ''], $controller);
 				self::getClassRoutes($className, $directoryPrefix, $urlPrefix, $parseActions);
 			}
+
+			Route::set('RestfulAPI\Error', $urlBase . '(/<unknown>)', ['unknown' => '.*'])
+				->filter([get_class(), 'error404']);
+
 			static::$_routes = TRUE;
 		}
+	}
+
+	static function error404()
+	{
+		Helpers_Response::json(new HTTP_Exception_404(Response::$messages[404]), 404);
 	}
 
 	protected static function getClassRoutes($className, $directoryPrefix, $urlPrefix, $parseActions = TRUE)

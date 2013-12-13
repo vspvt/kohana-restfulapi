@@ -8,7 +8,10 @@ return [
 	'directory_prefix' => 'Api' . DIRECTORY_SEPARATOR,
 	'route' => [
 		'name' => 'api',
-		'url_prefix' => 'api/v{version}',
+		'url' => [
+			'base' => 'api',
+			'version' => '/v{version}',
+		],
 	],
 	'onerror' => [
 		'log' => [
