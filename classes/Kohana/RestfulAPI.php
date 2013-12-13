@@ -89,10 +89,9 @@ class Kohana_RestfulAPI
 						/** @var RestfulAPI\Route $actionRoute */
 						$actionRoute = Annotations::getMethodAnnotation($method->name, self::annotationRoute, $className);
 						if (NULL !== $actionRoute) {
-							$actionName = Arr::get($actionMatches, 1, $method->name);
-							$actionRoute->name = $className . '::' . $actionName;
+							$actionRoute->name = $className . '::' . Arr::get($actionMatches, 1, $method->name);
 							$actionRoute->value = $urlPrefix . $actionRoute->value;
-							$actionRoute->defaults['action'] = $actionName;
+							$actionRoute->defaults['action'] = Arr::get($actionMatches, 3, $method->name);
 
 							self::makeRoute($actionRoute, $routeDefaults);
 						}

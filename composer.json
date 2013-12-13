@@ -3,7 +3,7 @@
 	"prefer-stable": true,
 	"name":        "vspvt/kohana-restfulapi",
 	"type":        "kohana-module",
-	"version":     "0.1.2",
+	"version":     "0.1.4",
 	"description": "RestfulAPI module for Kohana 3.3.1",
 	"homepage":    "https://github.com/vspvt/kohana-restfulapi",
 	"license":     "MIT",

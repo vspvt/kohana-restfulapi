@@ -73,26 +73,33 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 
 		$addCollection = FALSE;
 		$this->_actionName = 'action_' . $this->_actionMap[$requestMethod];
-		// If we are acting on a collection, append _collection to the action name.
-		if (FALSE !== $this->request->param('id', FALSE)) {
-			$addCollection = TRUE;
-			$this->collectionAction = TRUE;
-		}
-		// If this is a subaction, lets make sure we use it.
-		if (FALSE !== $this->request->param('method', FALSE)) {
-			$addCollection = FALSE;
-			$this->_actionName .= '_' . $this->request->param('method');
-			// If this is a subaction collection, lets make sure we use it.
-			if (FALSE !== ($this->collectionMethod = $this->request->param('method_id', FALSE))) {
+
+		if ($this->request->action() !== 'index') {
+			$this->_actionName .= '_' . $this->request->action();
+			$this->request->action('index');
+		} else {
+
+			// If we are acting on a collection, append _collection to the action name.
+			if (FALSE !== $this->request->param('id', FALSE)) {
 				$addCollection = TRUE;
-				$this->collectionMethod = Helpers_Text::trimAsNULL($this->collectionMethod);
-			} else{
-				if (FALSE !== ($extMethod = $this->request->param('method_ext', FALSE))) {
-					$this->_actionName .= '_' . $extMethod;
+				$this->collectionAction = TRUE;
+			}
+			// If this is a subaction, lets make sure we use it.
+			if (FALSE !== $this->request->param('method', FALSE)) {
+				$addCollection = FALSE;
+				$this->_actionName .= '_' . $this->request->param('method');
+				// If this is a subaction collection, lets make sure we use it.
+				if (FALSE !== ($this->collectionMethod = $this->request->param('method_id', FALSE))) {
+					$addCollection = TRUE;
+					$this->collectionMethod = Helpers_Text::trimAsNULL($this->collectionMethod);
+				} else{
+					if (FALSE !== ($extMethod = $this->request->param('method_ext', FALSE))) {
+						$this->_actionName .= '_' . $extMethod;
+					}
 				}
 			}
+			if ($addCollection) $this->_actionName .= '_collection';
 		}
-		if ($addCollection) $this->_actionName .= '_collection';
 
 		// Exists method action function?
 		if (!method_exists($this, $this->_actionName)) {
