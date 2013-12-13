@@ -8,15 +8,7 @@ return [
 	'directory_prefix' => 'Api' . DIRECTORY_SEPARATOR,
 	'route' => [
 		'name' => 'api',
-		'url_prefix' => 'api(/v<version>)',
-		'params' => [
-			'id' => '(\d+|[a-zA-Z][a-zA-Z0-9_]*)',
-			'custom_name' => '[a-zA-Z][a-zA-Z0-9_]*',
-			'custom_id' => '(\d+|[a-zA-Z][a-zA-Z0-9_]*)',
-		],
-		'defaults' => [
-			'directory' => 'V{version}',
-		],
+		'url_prefix' => 'api/v{version}',
 	],
 	'onerror' => [
 		'log' => [
