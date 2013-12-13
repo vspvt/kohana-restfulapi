@@ -88,13 +88,12 @@ class Kohana_RestfulAPI
 					if (!$method->isFinal() && preg_match('@^action_(([^_]+)(?:_(.+))?)$@', $method->name, $actionMatches)) {
 						/** @var RestfulAPI\Route $actionRoute */
 						$actionRoute = Annotations::getMethodAnnotation($method->name, self::annotationRoute, $className);
-						if (NULL === $actionRoute) {
-							$actionRoute = Annotations::annotationClass(self::annotationRoute);
-						}
-						$actionRoute->name = $controllerName . '::' . Arr::get($actionMatches, 1, $method->name);
-						$actionRoute->value = $urlPrefix . $actionRoute->value;
+						if (NULL !== $actionRoute) {
+							$actionRoute->name = $controllerName . '::' . Arr::get($actionMatches, 1, $method->name);
+							$actionRoute->value = $urlPrefix . $actionRoute->value;
 
-						self::makeRoute($actionRoute, $routeDefaults);
+							self::makeRoute($actionRoute, $routeDefaults);
+						}
 					}
 				}
 			}
