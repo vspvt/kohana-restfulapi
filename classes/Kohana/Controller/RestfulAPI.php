@@ -94,7 +94,7 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 		if (!method_exists($this, $this->_actionName)) {
 			$errorStr = 'The :method method is not implemented';
 			if (Kohana::$environment !== Kohana::PRODUCTION) $errorStr .= ' [:action]';
-			$this->error(new HTTP_Exception_404($errorStr, [
+			$this->error(new HTTP_Exception_501($errorStr, [
 				':method' => $method,
 				':action' => $this->_actionName,
 			]));
