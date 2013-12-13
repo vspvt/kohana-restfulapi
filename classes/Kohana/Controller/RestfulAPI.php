@@ -39,7 +39,7 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 
 	protected $collectionAction = FALSE;
 	protected $collectionActionValidation = [['digit']];
-	protected $collectionCustom = FALSE;
+	protected $collectionMethod = FALSE;
 
 	protected $debugToJSON;
 	/** @var array */
@@ -61,31 +61,35 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 			$this->request->method()
 		));
 
-		$method = $this->request->method();
+		$requestMethod = $this->request->method();
 
 		// Is supporting method?
-		if (!isset($this->_actionMap[$method])) {
+		if (!isset($this->_actionMap[$requestMethod])) {
 			$this->error(new HTTP_Exception_405('The :method method is not supported. Supported methods are :allowed_methods', [
-				':method' => $method,
+				':method' => $requestMethod,
 				':allowed_methods' => implode(', ', array_keys($this->_actionMap)),
 			]));
 		}
 
 		$addCollection = FALSE;
-		$this->_actionName = 'action_' . $this->_actionMap[$method];
+		$this->_actionName = 'action_' . $this->_actionMap[$requestMethod];
 		// If we are acting on a collection, append _collection to the action name.
 		if (FALSE !== $this->request->param('id', FALSE)) {
 			$addCollection = TRUE;
 			$this->collectionAction = TRUE;
 		}
 		// If this is a subaction, lets make sure we use it.
-		if (FALSE !== $this->request->param('custom_name', FALSE)) {
+		if (FALSE !== $this->request->param('method', FALSE)) {
 			$addCollection = FALSE;
-			$this->_actionName .= '_' . $this->request->param('custom_name');
+			$this->_actionName .= '_' . $this->request->param('method');
 			// If this is a subaction collection, lets make sure we use it.
-			if (FALSE !== ($this->collectionCustom = $this->request->param('custom_id', FALSE))) {
+			if (FALSE !== ($this->collectionMethod = $this->request->param('method_id', FALSE))) {
 				$addCollection = TRUE;
-				$this->collectionCustom = Helpers_Text::trimAsNULL($this->collectionCustom);
+				$this->collectionMethod = Helpers_Text::trimAsNULL($this->collectionMethod);
+			} else{
+				if (FALSE !== ($extMethod = $this->request->param('method_ext', FALSE))) {
+					$this->_actionName .= '_' . $extMethod;
+				}
 			}
 		}
 		if ($addCollection) $this->_actionName .= '_collection';
@@ -95,7 +99,7 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 			$errorStr = 'The :method method is not implemented';
 			if (Kohana::$environment !== Kohana::PRODUCTION) $errorStr .= ' [:action]';
 			$this->error(new HTTP_Exception_501($errorStr, [
-				':method' => $method,
+				':method' => $requestMethod,
 				':action' => $this->_actionName,
 			]));
 		}
@@ -616,7 +620,7 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 	 * @throws RestfulAPI_Exception_422
 	 * @return mixed
 	 */
-	protected function getInternalID(array $validationRules = NULL, $file = NULL)
+	protected function getID(array $validationRules = NULL, $file = NULL)
 	{
 		return $this->getParam('id', NULL, $validationRules, $file);
 	}
@@ -628,9 +632,9 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 	 * @throws RestfulAPI_Exception_422
 	 * @return mixed
 	 */
-	protected function getExternalID(array $validationRules = NULL, $file = NULL)
+	protected function getMethodID(array $validationRules = NULL, $file = NULL)
 	{
-		return $this->getParam('custom_id', NULL, $validationRules, $file);
+		return $this->getParam('method_id', NULL, $validationRules, $file);
 	}
 
 	/**
