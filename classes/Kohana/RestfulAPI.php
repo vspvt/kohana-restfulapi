@@ -73,7 +73,12 @@ class Kohana_RestfulAPI
 
 	protected static function getClassRoutes($className, $directoryPrefix, $urlPrefix, $parseActions = TRUE)
 	{
-		if (preg_match('@_V(\d+)_([^_]+)$@', $className, $matches)) {
+		$regex = sprintf(
+			'@^Controller_%s_V(\d+)_(.+)$@',
+			str_replace(DIRECTORY_SEPARATOR, '_', rtrim($directoryPrefix, DIRECTORY_SEPARATOR))
+		);
+
+		if (preg_match($regex, $className, $matches)) {
 			$version = $matches[1];
 			$urlPrefix = str_replace('{version}', $version, $urlPrefix) . '/';
 			$controllerName = $matches[2];
