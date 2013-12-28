@@ -48,7 +48,7 @@ class Kohana_RestfulAPI
 		if ($forced || !static::$_routes) {
 			$pathPrefix = 'classes' . DIRECTORY_SEPARATOR;
 			$directoryPrefix = self::config('directory_prefix');
-			$path = rtrim($pathPrefix . 'Controller' . DIRECTORY_SEPARATOR . $directoryPrefix, '/');
+			$path = rtrim($pathPrefix . 'Controller' . DIRECTORY_SEPARATOR . $directoryPrefix, DIRECTORY_SEPARATOR);
 			$controllers = array_keys(Arr::flatten(Kohana::list_files($path)));
 
 			$urlBase = self::config('route.url.base', 'api');
