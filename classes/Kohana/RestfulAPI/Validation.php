@@ -5,6 +5,8 @@
   
 class Kohana_RestfulAPI_Validation extends Validation
 {
+	protected $errorsFile;
+
 	/**
 	 * @param array $array
 	 *
@@ -15,6 +17,13 @@ class Kohana_RestfulAPI_Validation extends Validation
 		return new self($array);
 	}
 
+	public function __construct(array $array)
+	{
+		parent::__construct($array);
+		$this->setErrorsFile();
+	}
+
+
 	/**
 	 * @param null $file
 	 * @param bool $translate
@@ -23,8 +32,9 @@ class Kohana_RestfulAPI_Validation extends Validation
 	 */
 	public function errors($file = NULL, $translate = TRUE)
 	{
-		return parent::errors(NULL === $file ? 'request' : $file, $translate);
+		return parent::errors(NULL === $file ? $this->errorsFile : $file, $translate);
 	}
+
 
 	/**
 	 * @param null $key
@@ -69,6 +79,19 @@ class Kohana_RestfulAPI_Validation extends Validation
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @param string $errorsFile
+	 *
+	 * @return $this
+	 */
+	public function setErrorsFile($errorsFile = NULL)
+	{
+		if (NULL === $errorsFile) $errorsFile = 'request';
+		$this->errorsFile = $errorsFile;
+
+		return $this;
 	}
 
 }
