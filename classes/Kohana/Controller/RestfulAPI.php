@@ -132,7 +132,7 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 	{
 		$data = [];
 		// grab multipart boundary from content type header
-		preg_match('/boundary=(.*)$/', $_SERVER['CONTENT_TYPE'], $matches);
+		preg_match('/boundary=["]*([^"\s;]+)/', $_SERVER['CONTENT_TYPE'], $matches);
 		// content type is probably regular form-encoded
 		if (!count($matches)) {
 			Kohana::$log->add(Log::DEBUG, 'RAW BODY boundry - not found');
