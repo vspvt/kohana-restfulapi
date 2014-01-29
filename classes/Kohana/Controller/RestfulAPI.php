@@ -175,7 +175,7 @@ abstract class Kohana_Controller_RestfulAPI extends Controller
 						$_tmpname = tempnam(NULL, 'tmp');
 						if (FALSE !== $_tmpname) {
 							if (preg_match('@^Content-Type:@im', $body)) {
-								$body = trim(preg_replace('@^Content-Type:[^\n]*@i', "", $body));
+								$body = trim(preg_replace('@^Content-Type:[^\n]*@i', "", $body), "\r\n");
 							}
 
 							file_put_contents($_tmpname, $body);
